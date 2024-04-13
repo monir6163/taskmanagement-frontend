@@ -26,7 +26,7 @@ export const registrationSchema = z.object({
     .trim()
     .min(11, "Must be 11 digits")
     .max(11, "Must be 11 digits"),
-  photo: z.union([z.literal(""), z.string().trim().url()]),
+  photo: z.union([z.literal(""), z.string().trim().url().default("")]),
 });
 
 //user login schema for validation

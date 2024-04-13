@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { updateUserSchema, url } from "@/lib/utils";
+import { updateUserSchema } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { CldUploadWidget } from "next-cloudinary";
@@ -41,14 +41,17 @@ const UserProfile = ({ userData }) => {
     values.photo = imageUrl || userData.photo;
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${url}/user`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + session?.user?.token,
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await fetch(
+        `https://taskmanament-backend.vercel.app/api/v1/user`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + session?.user?.token,
+          },
+          body: JSON.stringify(values),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setIsSubmitting(false);

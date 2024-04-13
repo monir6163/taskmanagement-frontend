@@ -36,7 +36,7 @@ const Register = () => {
   });
 
   async function onSubmit(values) {
-    values.photo = imageUrl;
+    values.photo = imageUrl || "";
     setIsSubmitting(true);
     try {
       const response = await fetch(
