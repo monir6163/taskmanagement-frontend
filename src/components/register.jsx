@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { registrationSchema, url } from "@/lib/utils";
+import { registrationSchema } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CldUploadWidget } from "next-cloudinary";
 import Link from "next/link";
@@ -39,13 +39,16 @@ const Register = () => {
     values.photo = imageUrl;
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${url}/user`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      const response = await fetch(
+        `https://taskmanament-backend.vercel.app/api/v1/user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         setIsSubmitting(false);
