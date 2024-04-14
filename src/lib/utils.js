@@ -54,7 +54,11 @@ export const updateUserSchema = z.object({
     .max(11, "Must be 11 digits"),
   photo: z.union([z.literal(""), z.string().trim().url()]),
 });
-
+export const updatePasswordSchema = z.object({
+  id: z.number().int(),
+  oldPassword: z.string().trim().min(8, "Min 8 character strong password"),
+  newPassword: z.string().trim().min(8, "Min 8 character strong password"),
+});
 export const taskSchema = z.object({
   userId: z.number().int(),
   title: z

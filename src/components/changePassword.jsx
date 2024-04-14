@@ -1,13 +1,12 @@
 "use client";
-import { taskSchema } from "@/lib/utils";
+import { updatePasswordSchema } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Toaster, toast } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import LoadingButton from "./loadingButton";
-
-import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -17,36 +16,28 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { Textarea } from "./ui/textarea";
 
-const AddNewTask = () => {
+const ChangePassword = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm({
-    resolver: zodResolver(taskSchema),
+    resolver: zodResolver(updatePasswordSchema),
     defaultValues: {
-      userId: session?.user?.id,
-      title: "",
-      description: "",
-      status: "new",
+      id: session?.user?.id,
+      oldPassword: "",
+      newPassword: "",
     },
   });
 
   async function onSubmit(values) {
+    values.id = session?.user?.id;
     setIsSubmitting(true);
     try {
       const response = await fetch(
-        `https://taskmanament-backend.vercel.app/api/v1/task`,
+        `https://taskmanament-backend.vercel.app/api/v1/user/update/pass`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + session?.user?.token,
@@ -58,18 +49,17 @@ const AddNewTask = () => {
       if (response.ok) {
         setIsSubmitting(false);
         form.reset();
-        toast.success("Task added successfully");
+        toast.success(data.message);
         router.refresh();
       } else {
         setIsSubmitting(false);
-        toast.error("Task not added");
+        toast.error("Invalid Password");
       }
     } catch (error) {
-      toast.error("Something went wrong");
       setIsSubmitting(false);
+      toast.error(error.message);
     }
   }
-
   return (
     <div className="flex-1 space-y-4 border rounded-lg p-4 md:p-8 pt-6">
       <Toaster />
@@ -77,38 +67,16 @@ const AddNewTask = () => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="status"
+            name="oldPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Task Status</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Task Status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="new">New</SelectItem>
-                    <SelectItem value="progress">Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="canceled">Canceled</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Old Password</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Task Title" {...field} />
+                  <Input
+                    type="password"
+                    placeholder="Old Password"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -116,14 +84,14 @@ const AddNewTask = () => {
           />
           <FormField
             control={form.control}
-            name="description"
+            name="newPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>New Password</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="Tell us a little bit about the task you want to add"
-                    className=""
+                  <Input
+                    type="password"
+                    placeholder="New Password"
                     {...field}
                   />
                 </FormControl>
@@ -137,7 +105,7 @@ const AddNewTask = () => {
             type="submit"
             className="w-full mt-5"
           >
-            Save Task
+            Change Password
           </LoadingButton>
         </form>
       </Form>
@@ -145,4 +113,4 @@ const AddNewTask = () => {
   );
 };
 
-export default AddNewTask;
+export default ChangePassword;

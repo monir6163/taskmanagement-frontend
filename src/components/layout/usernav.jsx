@@ -51,6 +51,12 @@ export function UserNav({ userData }) {
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
           </Link>
+          <Link href="/dashboard/password">
+            <DropdownMenuItem className="cursor-pointer">
+              Change Password
+              <DropdownMenuShortcut>⇧⌘C</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
